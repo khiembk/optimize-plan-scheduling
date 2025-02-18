@@ -11,9 +11,16 @@ int curcap[21];
 bool visted[21];
 int minDistance = __INT_MAX__;
 int truck_location[21];
+/*
+problem2: CVRP with precedence constraints.
+  Add constrain to check if the path is valid or not*/
+bool precedence_constraints(int step, int cur_node, int cur_truck){
+    return true;
+}
 
 bool checkValid(int step,int cur_node, int cur_truck){
-    return (curcap[cur_truck] + demand[cur_node] <= cap)&&(!visted[cur_node]); 
+    bool precedence_valid = precedence_constraints(step, cur_node, cur_truck);
+    return (curcap[cur_truck] + demand[cur_node] <= cap)&&(!visted[cur_node])&& precedence_valid; 
 }
 void print_result(){
     cout<<"Mincost:"<<minCost<<endl;
