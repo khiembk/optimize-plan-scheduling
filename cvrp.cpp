@@ -81,7 +81,7 @@ void backtrack(int k){
                         //print_result();
                         
                    }else{
-                       if(currentcost + (node - 1 - k)*minDistance <= minCost){
+                       if(currentcost + (node - 1 - k + truck)*minDistance <= minCost){
                            backtrack(k+1);
                        }
                    }
