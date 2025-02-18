@@ -14,6 +14,19 @@ int truck_location[21];
 /*
 problem2: CVRP with precedence constraints.
   Add constrain to check if the path is valid or not*/
+/* CVRP with lower bound capacity constraint:
+- Mỗi xe tải có cận dưới và cận trên tải trọng là [Q1, Q2], các xe được phân công tổng tải trọng phải nằm trong khoảng này thì mới phục vụ.
+ Những xe được phân công quá ít ( < Q1) thì toàn bộ khách hàng được gán cho xe đó bị từ chối phục vụ. 
+ Tìm phương án để (1) không vi phạm ràng buộc,
+  (2) tối đa hóa lượng khách hàng phục vụ, 
+  (3) tối thiểu hóa tổng quãng đường
+
+  (1) phương án để  ko vi phạm ràng buộc:
+      - sửa tổ  hợp sinh gây ra mất cân bằng tải:
+        + chuyển ngẫu nhiên 1 tải từ xe nhiều tải nhất đến xe ít tải nhất.
+      - bỏ qua những tổ hợp không phù hợp.
+    Nếu dùng GA thì có thể sử dụng những kĩ thuật trong tính toán tiến hóa.    
+*/  
 bool precedence_constraints(int step, int cur_node, int cur_truck){
     return true;
 }
