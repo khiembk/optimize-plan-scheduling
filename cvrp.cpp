@@ -58,7 +58,7 @@ int comput_rest_cost(){
 
 void backtrack(int k){
     
-    for (int i=1; i<node; i++){
+    for (int i=1; i<=node; i++){
         if(!visted[i]){
             for(int j=1; j<=truck; j++){
                if(checkValid(k,i,j)){
@@ -70,13 +70,13 @@ void backtrack(int k){
                    currentcost += newcost;
                    truck_assigned[k] = j;
                    truck_location[j] = i;
-                   if(k==node-1){
+                   if(k==node){
                         int rest_cost = comput_rest_cost();
                         //cout<<"mincost: "<<minCost;
                         
                         if (minCost > currentcost + rest_cost){
                             minCost = currentcost + rest_cost;
-                            print_result();
+                            //print_result();
                         }
                         //print_result();
                         
@@ -97,17 +97,18 @@ void backtrack(int k){
     }
 }
 int main(){
+    ios_base::sync_with_stdio(false);cin.tie(NULL);
     cin>>node>>truck>>cap;
-    for (int i=0; i<node; i++){
+    for (int i=1; i<=node; i++){
         cin>>demand[i];
     }
-    for (int i=0; i< node; i++){
-        for(int j=0; j< node; j++){
+    for (int i=0; i<=node; i++){
+        for(int j=0; j<= node; j++){
             cin>>cost[i][j];
             minDistance= min(minDistance, cost[i][j]);
         }
     }
-    for(int i=0; i<node;i++){
+    for(int i=1; i<=node;i++){
         visted[i] = false;
     }
     for(int j=1;j<=truck; j++){
@@ -115,5 +116,6 @@ int main(){
         truck_location[j] = 0;
     }
     backtrack(1);
+    cout<<minCost;
     return 0;
 }
