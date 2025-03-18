@@ -2,38 +2,36 @@ from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 
 def create_data_model():
     """Stores the data for the problem."""
+    n  =  int(input())
+    distance = []
+    for _ in range(n):
+        line = list(map(int, input().split()))
+        distance.append(line)
     data = {}
     # Distance matrix (symmetric, 5 cities)
-    data['distance_matrix'] = [
-        [0, 10, 15, 20, 25],  # City 0
-        [10, 0, 35, 25, 30],  # City 1
-        [15, 35, 0, 30, 20],  # City 2
-        [20, 25, 30, 0, 15],  # City 3
-        [25, 30, 20, 15, 0],  # City 4
-    ]
+    data['distance_matrix'] = distance
     data['num_vehicles'] = 1  # Single vehicle (salesman)
     data['depot'] = 0         # Starting point (City 0)
-    return data
+    return data,n
 
 def print_solution(manager, routing, solution):
     """Prints the solution on console."""
-    print(f'Objective: {solution.ObjectiveValue()} units')
+    
     index = routing.Start(0)
-    plan_output = 'Route:\n'
+    plan_output = ''
     route_distance = 0
     while not routing.IsEnd(index):
-        plan_output += f' {manager.IndexToNode(index)} ->'
+        plan_output += f'{manager.IndexToNode(index)+ 1} '
         previous_index = index
         index = solution.Value(routing.NextVar(index))
         route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
-    plan_output += f' {manager.IndexToNode(index)}\n'
-    plan_output += f'Distance of the route: {route_distance} units\n'
+   
     print(plan_output)
 
 def main():
     """Solve the TSP."""
     # Instantiate the data problem
-    data = create_data_model()
+    data,n = create_data_model()
 
     # Create the routing index manager
     manager = pywrapcp.RoutingIndexManager(
@@ -64,7 +62,8 @@ def main():
 
     # Print solution
     if solution:
-        print_solution(manager, routing, solution)
+        print(n)
+        print_solution(manager,routing,solution)
     else:
         print('No solution found!')
 
