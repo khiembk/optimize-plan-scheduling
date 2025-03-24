@@ -1,52 +1,52 @@
 from ortools.sat.python import cp_model
+def read_input():
+    num_teachers, num_cources = map(int,input().split())
+    specialization = []
+    for _ in range(num_teachers):
+       line = list(map(int,input().split()))
+       specialization.append(line[1:])
+    num_conflicts = int(input())
+    conflicts = []
+    for _ in range(num_conflicts):
+        cur_conflict = list(map(int,input().split()))
+        conflicts.append(cur_conflict)
+    return num_teachers, num_cources, specialization, conflicts
 
-def solve_balanced_course_assignment(m, n, preferences, conflicts):
+def sovle_BCA(num_teachers, num_cources, specialization, conflicts):
     model = cp_model.CpModel()
-    x = [[model.NewBoolVar(f'x_{t}_{c}') for c in range(n)] for t in range(m)]
-    #### constraints with subject 
-    for c in range(n):
-        model.Add(sum(x[t][c] for t in range(m)) == 1)
-    ######     
-    for t in range(m):
-        for c in range(n):
-            if c + 1 not in preferences[t]:  
-                model.Add(x[t][c] == 0)
-
+    x = [[model.NewBoolVar(f'x_{t}_{c}') for c in range(num_cources)]for t in range(num_teachers)] 
     
-    for c1, c2 in conflicts:
-        for t in range(m):
-            model.Add(x[t][c1 - 1] + x[t][c2 - 1] <= 1)  
+    #### Each cource assign to single teacher 
+    for c in range(num_cources):
+        model.Add(sum(x[t][c] for t in range(num_teachers))==1)
+    #### cource will not asined to t if it not in specialization list 
+    for t in range(num_teachers):
+        for c in range(num_cources):
+            if c+1 not in specialization[t]:
+                model.Add(x[t][c]==0)
 
-    # Objective: Minimize the maximum load per teacher
-    max_load = model.NewIntVar(0, n, 'max_load')
-    for t in range(m):
-        model.Add(sum(x[t][c] for c in range(n)) <= max_load)
-    
-    model.Minimize(max_load)
+    #### handle conflict 
+    for conflict in conflicts:
+        c1 = conflict[0]
+        c2 = conflict[1]
+        for t in range(num_teachers):
+            model.Add(x[t][c1-1] + x[t][c2-1]<=1)     
 
-    # Solve the model
+    max_cap = model.NewIntVar(0,num_cources,'max_cap')
+    for t in range(num_teachers):
+        model.Add(sum(x[t][c] for c in range(num_cources))<= max_cap)
+
+    model.Minimize(max_cap)
+    #### solve 
     solver = cp_model.CpSolver()
     status = solver.Solve(model)
-
+    ## print result 
     if status == cp_model.OPTIMAL:
-        return solver.Value(max_load)
+        return solver.Value(max_cap)
     else:
-        return -1  # No feasible solution
-   
-def read_input():
-    m, n = map(int, input().split())
-    preferences = []
-    for _ in range(m):
-        line = list(map(int, input().split()))
-        preferences.append(line[1:])
-    
-    k = int(input())
-    conflicts = [tuple(map(int, input().split())) for _ in range(k)]
-    return m,n, preferences,k,conflicts
-
+        return -1  # No feasible solution               
 def main():
-    m,n,preferences,k, conflicts = read_input()
-    solve_balanced_course_assignment(m,n,preferences,conflicts)
-
+    num_teachers, num_cources, specialization, conficts = read_input()
+    print(sovle_BCA(num_teachers, num_cources, specialization, conficts))
 if __name__=="__main__":
     main()

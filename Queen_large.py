@@ -25,9 +25,10 @@ def main():
 
    ########
    model.add_all_different(x)   
-   model.add_all_different(x[i] + i  for i in range(n))
-   model.add_all_different(x[i] - i for i in range(n))
+   model.add_all_different([x[i] + i for i in range(n)])
+   model.add_all_different([x[i] + i for i in range(n)])
    solver = cp_model.CpSolver()
+   solver.parameters.enumerate_all_solutions = False 
    status = solver.Solve(model)
    if status == cp_model.FEASIBLE or status == cp_model.OPTIMAL:
       print(n)
