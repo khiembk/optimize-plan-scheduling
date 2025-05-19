@@ -22,20 +22,21 @@ def solve_by_cp(n):
     else:
         print("No solution found.")
 
-def min_conflicts(n, max_steps=1000):
+def min_conflicts(n, max_steps= 300):
     """Solves the N-Queens problem using the Min-Conflicts heuristic for large n (n > 100)."""
     # Step 1: Initial greedy assignment
     queens = list(range(1, n+1))  # 1-based indexing
     random.shuffle(queens)
-
-    def count_conflicts():
+    
+    def count_conflicts_range(n1, n2):
         """Counts conflicts in current board state."""
+        cur_queen = queens[n1:n2]
         row_counts = {}
         diag1_counts = {}
         diag2_counts = {}
         conflicts = 0
 
-        for col, row in enumerate(queens):
+        for col, row in enumerate(cur_queen):
             d1 = row - col
             d2 = row + col
             conflicts += row_counts.get(row, 0) + diag1_counts.get(d1, 0) + diag2_counts.get(d2, 0)
@@ -45,9 +46,16 @@ def min_conflicts(n, max_steps=1000):
             diag2_counts[d2] = diag2_counts.get(d2, 0) + 1
 
         return conflicts
+    
+    def count_conflicts_iterative(n, chunk_size=100):
+        conflicts = 0
+        for i in range(0, n, chunk_size):
+            conflicts += count_conflicts_range(i, min(i + chunk_size, n))
+        
+        return conflicts 
 
     for i in range(max_steps):
-        if count_conflicts() == 0 or i == max_steps-1:
+        if count_conflicts_iterative(n) or i == max_steps-1:
             return queens  # Solution found
 
         # Step 2: Identify a conflicting column
@@ -59,7 +67,7 @@ def min_conflicts(n, max_steps=1000):
 
         for row in range(1, n+1):
             queens[col] = row
-            conflicts = count_conflicts()
+            conflicts = count_conflicts_iterative(n)
             if conflicts < min_conflicts:
                 min_conflicts = conflicts
                 best_row = row
