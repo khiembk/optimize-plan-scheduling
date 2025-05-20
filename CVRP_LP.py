@@ -14,7 +14,7 @@ def read_input():
     
     return n,k,q,demand, distances
 
-def solve_cvr_lp(node , cars, capa, demand, distances):
+def solve_cvr_lp(n , cars, capa, demand, distances):
 
     solver = pywraplp.Solver.CreateSolver('SCIP')
     x = [[[solver.BoolVar(f'x_{i}_{j}_{k}') for k in range(cars)] for j in range(n+1)] for i in range(n+1)]
